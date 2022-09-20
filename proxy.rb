@@ -43,12 +43,11 @@ class TailscaleOPProxy < Sinatra::Application
   def tailscale_whois(request)
     conn = Excon.new('unix:/local-tailscaled.sock', socket: '/var/run/tailscale/tailscaled.sock')
     response = conn.request(method: :get, path: "/localapi/v0/whois?addr=#{request.ip}:1")
-    parsed = WhoisResponse.from_hash(JSON.parse(response.body))
-    parsed.Node.Tags
+    WhoisResponse.from_hash(JSON.parse(response.body))
   end
 
   get '/secrets' do
     whois = tailscale_whois(request)
-    whois.serialize.to_json
+    whois.Node.Tags
   end
 end
