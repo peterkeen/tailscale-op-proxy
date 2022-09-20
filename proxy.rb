@@ -90,7 +90,7 @@ class TailscaleOPProxy < Sinatra::Application
 
     JSON.parse(response.body).map do |item|
       item_resp = conn.request(method: :get, path: "/v1/vaults/#{ENV['OP_CONNECT_VAULT_ID']}/items/#{item['id']}")
-      OPItem.parse(item_resp.body)
+      OPItem.from_hash(item_resp.body)
     end
   end
 
