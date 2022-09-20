@@ -85,9 +85,6 @@ class TailscaleOPProxy < Sinatra::Application
     conn = Excon.new('http://op-connect-api:8080', headers: {"Authorization" => "Bearer #{ENV['OP_CONNECT_API_TOKEN']}"})
     response = conn.request(method: :get, path: "/v1/vaults/#{ENV['OP_CONNECT_VAULT_ID']}/items")
 
-    parsed = JSON.parse(response.body)
-    pp parsed
-
     JSON.parse(response.body).map do |item|
       item_resp = conn.request(method: :get, path: "/v1/vaults/#{ENV['OP_CONNECT_VAULT_ID']}/items/#{item['id']}")
       OPItem.from_hash(JSON.parse(item_resp.body))
