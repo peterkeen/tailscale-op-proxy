@@ -96,7 +96,14 @@ class TailscaleOPProxy < Sinatra::Application
 
   def secrets_for_tags(tags)
     tags = tags.dup.map { |t| t.gsub(/tag:/, '') }
-    all_secrets.select { |s| (s.tags & tags).length > 0 }
+    secrets = all_secrets.select { |s| (s.tags & tags).length > 0 }
+
+    secrets.flat_ap do |item|
+      item.fields.map do |field|
+        next unless field.type == 'STRING'
+        [field.label, field.value]
+      end
+    end.compact
   end
 
   get '/secrets' do
