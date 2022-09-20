@@ -1,0 +1,42 @@
+services:
+  op-connect-api:
+    image: 1password/connect-api:latest
+    hostname: op-connect-api
+    networks:
+      - op-connect
+    volumes:
+      - "${CONFIGS_DIR}/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "data:/home/opuser/.op/data"
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    hostname: op-connect-sync
+    networks:
+      - op-connect
+    volumes:
+      - "${CONFIGS_DIR}/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "data:/home/opuser/.op/data"
+
+  tailscale-op-proxy:
+    image: ghcr.io/peterkeen/tailscale-op-proxy:main
+    environment:
+      - OP_CONNECT_API_TOKEN
+      - OP_CONNECT_VAULT_ID
+      - PORT=9292
+      - "RACK_ENV=production"
+    ports:
+      - "9292:9292"
+    networks:
+      - tailnet
+      - op-connect
+    volumes:
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+
+networks:
+  op-connect:
+
+  # docker network create -d bridge -o com.docker.network.bridge.host_binding_ipv4=$(tailscale ip | head -n1) tailnet
+  tailnet:
+    external: true
+
+volumes:
+  data:
