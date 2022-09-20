@@ -48,9 +48,9 @@ end
 class OPField < T::Struct
   const :id, String
   const :type, String
-  const :purpose, String
+  const :purpose, T.nilable(String)
   const :label, String
-  const :value, String
+  const :value, T.nilable(String)
   const :section, T.nilable(OPSection)
 end
 
