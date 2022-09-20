@@ -23,7 +23,7 @@ class Node < T::Struct
   const :ComputedName, String
   const :ComputedNameWithHost, String
   const :User, Integer
-  const :Tags, T::Array[String]
+  const :Tags, T::Array[String], default: []
 end
 
 class UserProfile < T::Struct
@@ -31,7 +31,7 @@ class UserProfile < T::Struct
   const :LoginName, String
   const :DisplayName, String
   const :ProfilePicURL, String
-  const :Roles, T::Array[String]
+  const :Roles, T::Array[String], default: []
 end
 
 class WhoisResponse < T::Struct
