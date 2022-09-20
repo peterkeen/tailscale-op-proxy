@@ -108,6 +108,6 @@ class TailscaleOPProxy < Sinatra::Application
 
   get '/secrets' do
     whois = tailscale_whois(request)
-    secrets_for_tags(whois.Node.Tags).map(&:serialize).to_json
+    secrets_for_tags(whois.Node.Tags).to_json
   end
 end
