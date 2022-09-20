@@ -22,6 +22,8 @@ class Node < T::Struct
   const :Online, T::Boolean
   const :ComputedName, String
   const :ComputedNameWithHost, String
+  const :User, Integer
+  const :Tags, T::Array[String]
 end
 
 class UserProfile < T::Struct
@@ -41,7 +43,8 @@ class TailscaleOPProxy < Sinatra::Application
   def tailscale_whois(request)
     conn = Excon.new('unix:/local-tailscaled.sock', socket: '/var/run/tailscale/tailscaled.sock')
     response = conn.request(method: :get, path: "/localapi/v0/whois?addr=#{request.ip}:1")
-    WhoisResponse.from_hash(JSON.parse(response.body))
+    parsed = WhoisResponse.from_hash(JSON.parse(response.body))
+    parsed.Node.Tags
   end
 
   get '/secrets' do
