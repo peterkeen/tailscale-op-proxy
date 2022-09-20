@@ -4,6 +4,7 @@ require 'ipaddr'
 require 'time'
 require 'json'
 require 'excon'
+require 'pp'
 
 class Node < T::Struct
   const :ID, Integer
@@ -83,6 +84,9 @@ class TailscaleOPProxy < Sinatra::Application
   def all_secrets
     conn = Excon.new('http://op-connect-api:8080', headers: {"Authorization" => "Bearer #{ENV['OP_CONNECT_API_TOKEN']}"})
     response = conn.request(method: :get, path: "/v1/vaults/#{ENV['OP_CONNECT_VAULT_ID']}/items")
+
+    parsed = JSON.parse(response.body)
+    pp parsed
 
     JSON.parse(response.body).map do |item|
       item_resp = conn.request(method: :get, path: "/v1/vaults/#{ENV['OP_CONNECT_VAULT_ID']}/items/#{item['id']}")
