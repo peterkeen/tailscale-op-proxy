@@ -96,11 +96,11 @@ class TailscaleOPProxy < Sinatra::Application
 
   def secrets_for_tags(tags)
     tags = tags.dup.map { |t| t.gsub(/tag:/, '') }
-    all_secrets.select { |s| (s.tags & tags).length > 0 }.map { |s| s.serialize }
+    all_secrets.select { |s| (s.tags & tags).length > 0 }
   end
 
   get '/secrets' do
     whois = tailscale_whois(request)
-    secrets_for_tags(whois.Node.Tags)
+    secrets_for_tags(whois.Node.Tags).map(&:serialize).to_json
   end
 end
