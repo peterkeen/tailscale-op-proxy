@@ -101,6 +101,7 @@ class TailscaleOPProxy < Sinatra::Application
     secrets.flat_map do |item|
       item.fields.map do |field|
         next unless field.type == 'STRING'
+        next if field.label =~ /notesPlain/
         [field.label, field.value]
       end
     end.compact
