@@ -96,7 +96,7 @@ class TailscaleOPProxy < Sinatra::Application
 
   def secrets_for_tags(tags)
     tags = tags.dup.map { |t| t.gsub(/tag:/, '') }
-    all_secrets.select { |s| (s.tags & tags).length > 0 }
+    all_secrets.select { |s| (s.tags & tags).length > 0 }.map { |s| s.serialize }
   end
 
   get '/secrets' do
