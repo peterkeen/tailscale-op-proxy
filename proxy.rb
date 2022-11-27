@@ -79,6 +79,8 @@ class TailscaleOPProxy < Sinatra::Application
     conn = Excon.new('unix:/local-tailscaled.sock', socket: '/var/run/tailscale/tailscaled.sock')
     response = conn.request(method: :get, path: "/localapi/v0/whois?addr=#{request.ip}:1")
     WhoisResponse.from_hash(JSON.parse(response.body))
+  rescue
+    nil
   end
 
   def all_secrets
@@ -92,6 +94,7 @@ class TailscaleOPProxy < Sinatra::Application
   end
 
   def secrets_for_tags(tags)
+    tags ||= ["tag:server"]
     tags = tags.dup.map { |t| t.gsub(/tag:/, '') }
     secrets = all_secrets.select { |s| (s.tags & tags).length > 0 }
 
@@ -106,6 +109,6 @@ class TailscaleOPProxy < Sinatra::Application
 
   get '/secrets' do
     whois = tailscale_whois(request)
-    secrets_for_tags(whois.Node.Tags).to_json
+    secrets_for_tags(whois&.Node&.Tags).to_json
   end
 end
