@@ -81,7 +81,7 @@ class TailscaleOPProxy < Sinatra::Application
     sigil, token = env['HTTP_AUTHORIZATION']&.split(/\s+/, 2)
 
     if sigil.nil?
-      return secrets_for_tags(nil)
+      return secrets_for_tags(nil).to_json
     end
 
     tags = tags_for_server_token(token)
