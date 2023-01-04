@@ -60,7 +60,7 @@ class TailscaleOPProxy < Sinatra::Application
       return item.tags
     end
 
-    []
+    nil
   end
 
   def secrets_for_tags(tags)
@@ -84,9 +84,11 @@ class TailscaleOPProxy < Sinatra::Application
       return secrets_for_tags(nil)
     end
 
-    halt 401, {'Content-Type' => 'application/json'}, {error: "unauthorized"}.to_json
-
     tags = tags_for_server_token(token)
-    secrets_for_tags(tags).to_json
+    if tags.nil?
+      halt 401, {'Content-Type' => 'application/json'}, {error: "unauthorized"}.to_json
+    else
+      secrets_for_tags(tags).to_json
+    end
   end
 end
